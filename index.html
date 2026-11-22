@@ -456,6 +456,11 @@ input[type=text],input[type=email],input[type=password],input[type=search],selec
 .acard .tabs button{color:rgba(60,60,67,.65)!important;font-weight:500;border-radius:8px;padding:9px}
 .acard .tabs button.on{background:#fff!important;color:#000!important;font-weight:700;box-shadow:0 1px 4px rgba(0,0,0,.2),0 0 0 .5px rgba(60,60,67,.12)}
 .acard input[type=text],.acard input[type=email],.acard input[type=password]{background:#f2f2f7!important;border:.5px solid rgba(60,60,67,.18)!important}
+
+/* ===== 상하 스크롤: 딱딱한 차단(none) 제거 -> 부드러운 탄성 제한 ===== */
+html,body{overscroll-behavior-y:contain!important;overscroll-behavior-x:none!important}
+#main,#side,#qp .ql,.modal{overscroll-behavior-y:contain!important;overscroll-behavior-x:none!important;scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
+#main{touch-action:pan-y}
 </style>
 </head>
 <body>
