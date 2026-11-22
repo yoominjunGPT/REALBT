@@ -461,6 +461,10 @@ input[type=text],input[type=email],input[type=password],input[type=search],selec
 html,body{overscroll-behavior-y:contain!important;overscroll-behavior-x:none!important}
 #main,#side,#qp .ql,.modal{overscroll-behavior-y:contain!important;overscroll-behavior-x:none!important;scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
 #main{touch-action:pan-y}
+
+/* ===== 내용이 짧아도 부드러운 탄성 제한 (터치 기기) ===== */
+@media(hover:none){#main>.pg{min-height:calc(100% + 1px)}}
+#main,.modal,#qp .ql{will-change:transform}
 </style>
 </head>
 <body>
@@ -800,10 +804,10 @@ VIEWS.home=m=>{
  const recent=uniq(S.history.map(h=>h.song_id)).map(song).filter(Boolean);
  const added=S.songs.slice(0,14);
  const liked=S.songs.filter(s=>S.favs.has(s.id));
- const hr=new Date().getHours();const hello=hr<6?'늦은 밤이에요':hr<12?'좋은 아침이에요':hr<18?'좋은 오후예요':'좋은 저녁이에요';
- if(!S.songs.length){m.innerHTML=`<div class="pg"><h1>${hello}</h1>${emptyHTML('아직 음악이 없어요. MP3를 업로드해 보세요.',`<button class="btn pri" data-go="upload">${ic('upload')} 음악 업로드</button>`)}</div>`;return}
+ const hr=new Date().getHours();const hello=hr<6?'늦은 밤이에요':hr<12?'좋은 아침이에요':hr<18?'좋은 오후예요':'좋은 저녁이에요';const emo=hr<6?'😴':hr<12?'😊':hr<18?'😎':'😌';
+ if(!S.songs.length){m.innerHTML=`<div class="pg"><h1>${hello} ${emo}</h1>${emptyHTML('아직 음악이 없어요. MP3를 업로드해 보세요.',`<button class="btn pri" data-go="upload">${ic('upload')} 음악 업로드</button>`)}</div>`;return}
  S.lists.all=S.songs.map(s=>s.id);
- m.innerHTML=`<div class="pg"><h1>${hello}${S.profile?.username?', '+esc(S.profile.username):''}</h1>
+ m.innerHTML=`<div class="pg"><h1>${hello}${S.profile?.username?', '+esc(S.profile.username)+'님':''} ${emo}</h1>
  ${section('최근 재생한 음악','recent',recent,'library/recent')}
  ${section('최근 추가한 음악','added',added,'library/added')}
  ${section('좋아요한 음악','liked',liked,'library/liked')}
@@ -1391,6 +1395,30 @@ document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&['+','-','=',
 /* 가로 스크롤 위치 고정 */
 const fix=()=>{if(window.scrollX)window.scrollTo(0,window.scrollY);const m=document.getElementById('main');if(m&&m.scrollLeft)m.scrollLeft=0};
 window.addEventListener('scroll',fix,{passive:true});document.addEventListener('scroll',e=>{if(e.target&&e.target.id==='main')fix()},true);
+})();
+</script>
+<script>
+/* 스크롤할 내용이 없는 화면에서도 상하로 부드럽게 늘어났다 돌아오는 탄성 효과 */
+(function(){
+ const SEL='#main,.modal,#qp .ql';let el=null,y0=0,pulling=false,wt=0;
+ const noScroll=t=>t.scrollHeight<=t.clientHeight+1;
+ const rub=d=>Math.sign(d)*Math.min(90,Math.abs(d)*.4);
+ const back=t=>{t.style.transition='transform .4s cubic-bezier(.2,.8,.2,1)';t.style.transform=''};
+ document.addEventListener('touchstart',e=>{
+  const t=e.target.closest(SEL);if(!t||e.touches.length!==1||e.target.closest('input,textarea,select,.rg')){el=null;return}
+  el=t;y0=e.touches[0].clientY;pulling=false},{passive:true});
+ document.addEventListener('touchmove',e=>{
+  if(!el||e.touches.length!==1)return;
+  if(!noScroll(el))return;
+  const d=e.touches[0].clientY-y0;if(Math.abs(d)<4&&!pulling)return;
+  pulling=true;el.style.transition='none';el.style.transform='translateY('+rub(d)+'px)';
+  if(e.cancelable)e.preventDefault()},{passive:false});
+ const end=()=>{if(el&&pulling)back(el);el=null;pulling=false};
+ document.addEventListener('touchend',end,{passive:true});document.addEventListener('touchcancel',end,{passive:true});
+ document.addEventListener('wheel',e=>{
+  const t=e.target.closest&&e.target.closest(SEL);if(!t||e.ctrlKey||!noScroll(t))return;
+  t.style.transition='transform .12s ease-out';t.style.transform='translateY('+(-Math.sign(e.deltaY)*Math.min(12,Math.abs(e.deltaY)*.25))+'px)';
+  clearTimeout(wt);wt=setTimeout(()=>back(t),120)},{passive:true});
 })();
 </script>
 </body>
