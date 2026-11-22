@@ -499,17 +499,61 @@ html,body,#main,.modal,#qp .ql{overscroll-behavior-y:none!important}
 /* 전체화면 플레이어: 닫힐 때도 슬라이드 애니메이션이 보이도록 visibility를 늦게 전환 */
 #full{transition:transform .35s cubic-bezier(.2,.8,.2,1),visibility 0s linear .35s}
 #full.open{transition:transform .35s cubic-bezier(.2,.8,.2,1),visibility 0s linear 0s}
+
+/* ===== v2: 미니플레이어 / 재생창 정리 ===== */
+:root{--mini-r:12px}
+.pinfo .cv{border-radius:var(--mini-r)!important}
+@media(max-width:767px){#player{border-radius:var(--mini-r)!important;overflow:hidden}}
+#main,#side,#qp .ql,.modal{scroll-behavior:auto!important}
+/* 재생바: 둥근 점 없음, 양 끝 평평 */
+.rg::-webkit-slider-runnable-track{border-radius:0!important}
+.rg::-webkit-slider-thumb{width:0!important;height:0!important;margin-top:0!important;opacity:0!important;border:0!important;box-shadow:none!important;background:transparent!important}
+.rg::-moz-range-track,.rg::-moz-range-progress{border-radius:0!important}
+.rg::-moz-range-thumb{width:0!important;height:0!important;opacity:0!important;border:0!important;box-shadow:none!important;background:transparent!important}
+/* 전체화면 플레이어 배치: 앨범은 원래 위치 고정, 제목 바로 아래는 그대로, 재생바/버튼만 아래로 */
+#full{padding-bottom:calc(34px + var(--sab))!important}
+#full .fb{--A:min(calc(100vw - 48px),520px,46dvh,420px);justify-content:flex-start;gap:0}
+#full .fartw{flex:none;width:100%;display:flex;justify-content:center;padding:0;margin-top:max(0px,calc((100dvh - 70px - var(--sat) - var(--sab) - var(--A) - 271px)/2))}
+#full .fart{width:var(--A)}
+#full .fti{margin-top:20px}
+#full .fti>.ib{margin-right:-7px}
+#full .fseek{width:100%;margin-top:auto;padding-top:14px}
+#full .fseek .rg{display:block;width:100%;--th:6px;height:24px}
+#full .fseek .tms{display:flex;justify-content:space-between;margin-top:2px;font-size:12px;color:var(--tx3);font-variant-numeric:tabular-nums}
+#full .ctl{width:100%;justify-content:space-between;margin-top:auto;padding:12px 2px 0}
+/* 로그인창: 흰 배경 + 선택된 탭 그림자 강화 */
+#auth,#setup{background:#fff!important}
+.acard .tabs button.on{box-shadow:0 2px 8px rgba(0,0,0,.32),0 0 0 .5px rgba(60,60,67,.22)!important}
+.acard{box-shadow:0 12px 44px rgba(0,0,0,.24),0 2px 8px rgba(0,0,0,.1)!important}
+.acard input[type=text],.acard input[type=email],.acard input[type=password]{background:#fff!important;border:1px solid rgba(60,60,67,.28)!important}
+
+/* ===== v3: 재생 버튼 더 둥글게 ===== */
+#player .ctl .ib,#full .ctl .ib{border-radius:50%;background:var(--bg3);color:var(--tx2);display:inline-grid;place-items:center}
+#player .ctl .ib:hover,#full .ctl .ib:hover{background:var(--bg4);color:var(--tx)}
+#player .ctl .ib.on,#full .ctl .ib.on{background:rgba(250,35,59,.14);color:var(--ac)}
+#player .ctl .ib{width:36px;height:36px}
+#player .ctl .ib .ic{width:22px;height:22px}
+#player .ctl .pp{width:42px;height:42px;border-radius:50%;background:var(--tx)!important;color:#fff!important}
+#player .ctl .pp .ic{width:24px;height:24px}
+#player .ctl{gap:8px}
+#full .ctl .ib{width:42px;height:42px}
+#full .ctl .ib .ic{width:22px;height:22px}
+#full .ctl .ib:nth-child(2),#full .ctl .ib:nth-child(4){width:54px;height:54px;color:var(--tx)}
+#full .ctl .ib:nth-child(2) .ic,#full .ctl .ib:nth-child(4) .ic{width:30px;height:30px}
+#full .ctl .pp.lg{width:76px;height:76px;border-radius:50%;background:var(--tx)!important;color:#fff!important}
+#full .ctl .pp.lg .ic{width:42px;height:42px}
+@media(max-width:767px){#player .ctl .ib.hm{display:none}}
 </style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
-<symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></symbol>
-<symbol id="i-pause" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></symbol>
-<symbol id="i-next" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></symbol>
-<symbol id="i-prev" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></symbol>
-<symbol id="i-shuffle" viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></symbol>
-<symbol id="i-repeat" viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></symbol>
-<symbol id="i-repeat-one" viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4zm-4-2V9h-1l-2 1v1h1.5v4H13z"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><polygon points="8,5.8 18.2,12 8,18.2" fill="currentColor" stroke="currentColor" stroke-width="2.8" stroke-linejoin="round"/></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24"><rect x="6" y="5" width="4.2" height="14" rx="1.8" fill="currentColor"/><rect x="13.8" y="5" width="4.2" height="14" rx="1.8" fill="currentColor"/></symbol>
+<symbol id="i-next" viewBox="0 0 24 24"><polygon points="6.2,6.6 14,12 6.2,17.4" fill="currentColor" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/><line x1="17.6" y1="6.4" x2="17.6" y2="17.6" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></symbol>
+<symbol id="i-prev" viewBox="0 0 24 24"><polygon points="17.8,6.6 10,12 17.8,17.4" fill="currentColor" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/><line x1="6.4" y1="6.4" x2="6.4" y2="17.6" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></symbol>
+<symbol id="i-shuffle" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h3c3.5 0 4.5 3 6.5 6s3 4 6 4"/><path d="M4 17h3c1.5 0 2.5-.7 3.4-1.8"/><path d="M13.5 8.8C14.4 7.7 15.5 7 17 7h3"/><path d="M18 5l2 2-2 2"/><path d="M18 15l2 2-2 2"/></g></symbol>
+<symbol id="i-repeat" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11v-1a3 3 0 0 1 3-3h12"/><path d="M16 4l3 3-3 3"/><path d="M20 13v1a3 3 0 0 1-3 3H5"/><path d="M8 20l-3-3 3-3"/></g></symbol>
+<symbol id="i-repeat-one" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11v-1a3 3 0 0 1 3-3h12"/><path d="M16 4l3 3-3 3"/><path d="M20 13v1a3 3 0 0 1-3 3H5"/><path d="M8 20l-3-3 3-3"/><path d="M11 10.6l1.6-1v6"/></g></symbol>
 <symbol id="i-volume" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></symbol>
 <symbol id="i-mute" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></symbol>
 <symbol id="i-queue" viewBox="0 0 24 24"><path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/></symbol>
@@ -555,7 +599,7 @@ html,body,#main,.modal,#qp .ql{overscroll-behavior-y:none!important}
     <div class="pmid">
       <div class="ctl">
         <button class="ib hm" data-a="shuffle" data-pl="shuffle" aria-label="셔플"><svg class="ic"><use href="#i-shuffle"/></svg></button>
-        <button class="ib hm" data-a="prev" aria-label="이전 곡"><svg class="ic"><use href="#i-prev"/></svg></button>
+        <button class="ib" data-a="prev" aria-label="이전 곡"><svg class="ic"><use href="#i-prev"/></svg></button>
         <button class="pp" data-a="toggle" aria-label="재생/일시정지"><svg class="ic" data-pl="playicon"><use href="#i-play"/></svg></button>
         <button class="ib" data-a="next" aria-label="다음 곡"><svg class="ic"><use href="#i-next"/></svg></button>
         <button class="ib hm" data-a="repeat" data-pl="repeat" aria-label="반복"><svg class="ic" data-pl="repicon"><use href="#i-repeat"/></svg></button>
@@ -565,8 +609,6 @@ html,body,#main,.modal,#qp .ql{overscroll-behavior-y:none!important}
     <div class="pright">
       <button class="ib" data-a="likecur" data-pl="like" aria-label="좋아요"><svg class="ic"><use href="#i-heart"/></svg></button>
       <button class="ib" data-a="queue" aria-label="재생 대기열"><svg class="ic"><use href="#i-queue"/></svg></button>
-      <button class="ib" data-a="mute" aria-label="음소거"><svg class="ic" data-pl="volicon"><use href="#i-volume"/></svg></button>
-      <input class="rg vol" type="range" min="0" max="1" step="0.01" value="1" aria-label="볼륨">
       <button class="ib" data-a="openfull" aria-label="전체 화면"><svg class="ic"><use href="#i-up"/></svg></button>
     </div>
   </footer>
@@ -576,10 +618,10 @@ html,body,#main,.modal,#qp .ql{overscroll-behavior-y:none!important}
 <section id="full" aria-label="전체 화면 플레이어">
   <div class="fh"><button class="ib" data-a="closefull" aria-label="닫기"><svg class="ic"><use href="#i-down"/></svg></button><span>재생 중</span><button class="ib" data-a="queue" aria-label="대기열"><svg class="ic"><use href="#i-queue"/></svg></button></div>
   <div class="fb">
-    <div class="fart"><img class="cv" data-pl="art" alt="" draggable="false"></div>
+    <div class="fartw"><div class="fart"><img class="cv" data-pl="art" alt="" draggable="false"></div></div>
     <div class="fti"><div class="tx"><div class="pt" data-pl="title"></div><div class="ps" data-pl="artist"></div></div>
       <button class="ib" data-a="likecur" data-pl="like" aria-label="좋아요"><svg class="ic"><use href="#i-heart"/></svg></button></div>
-    <div class="seekrow" style="width:100%"><span class="tm" data-pl="cur">0:00</span><input class="rg seek" type="range" min="0" max="100" step="0.1" value="0" aria-label="재생 위치"><span class="tm" data-pl="dur">0:00</span></div>
+    <div class="fseek"><input class="rg seek" type="range" min="0" max="100" step="0.1" value="0" aria-label="재생 위치"><div class="tms"><span data-pl="cur">0:00</span><span data-pl="dur">0:00</span></div></div>
     <div class="ctl">
       <button class="ib" data-a="shuffle" data-pl="shuffle" aria-label="셔플"><svg class="ic"><use href="#i-shuffle"/></svg></button>
       <button class="ib" data-a="prev" aria-label="이전 곡"><svg class="ic"><use href="#i-prev"/></svg></button>
@@ -587,7 +629,6 @@ html,body,#main,.modal,#qp .ql{overscroll-behavior-y:none!important}
       <button class="ib" data-a="next" aria-label="다음 곡"><svg class="ic"><use href="#i-next"/></svg></button>
       <button class="ib" data-a="repeat" data-pl="repeat" aria-label="반복"><svg class="ic" data-pl="repicon"><use href="#i-repeat"/></svg></button>
     </div>
-    <div class="fv"><button class="ib" data-a="mute" aria-label="음소거"><svg class="ic" data-pl="volicon"><use href="#i-volume"/></svg></button><input class="rg vol" type="range" min="0" max="1" step="0.01" value="1" aria-label="볼륨"></div>
   </div>
 </section>
 
@@ -654,8 +695,15 @@ async function ensureArt(paths){
  for(let i=0;i<need.length;i+=100){const chunk=need.slice(i,i+100);
   try{const {data,error}=await sb.storage.from(BUCKET).createSignedUrls(chunk,SIGN_SEC);if(error)throw error;
    (data||[]).forEach(r=>{if(r.signedUrl)ART[r.path]={url:r.signedUrl,exp:Date.now()+SIGN_SEC*1000}})}catch(e){console.warn('sign art',e)}}}
+const PRE=new Map();
+function preloadImgs(paths,ms=7000){
+ const urls=uniq((paths||[]).filter(Boolean).map(p=>ART[p]&&ART[p].url).filter(Boolean)).filter(u=>!PRE.has(u));
+ const ps=urls.map(u=>new Promise(res=>{const im=new Image();const fin=()=>{(im.decode?im.decode().catch(()=>{}):Promise.resolve()).then(res)};im.onload=fin;im.onerror=res;im.src=u;PRE.set(u,im)}));
+ return Promise.race([Promise.all(ps),sleep(ms)])}
+const _ensureArt=ensureArt;
+ensureArt=async function(paths){await _ensureArt(paths);await preloadImgs(paths)};
 const allArtPaths=()=>[...S.songs.map(s=>s.artwork_path),...S.playlists.map(p=>p.cover_url)];
-const cvImg=(src,cls='')=>`<img class="cv ${cls}" src="${esc(src)}" alt="" loading="lazy" draggable="false">`;
+const cvImg=(src,cls='')=>`<img class="cv ${cls}" src="${esc(src)}" alt="" decoding="sync" draggable="false">`;
 document.addEventListener('error',e=>{const t=e.target;if(t&&t.tagName==='IMG'&&t.classList.contains('cv')&&!t.dataset.fb){t.dataset.fb=1;t.src=placeholder('x')}},true);
 const AUDIO_URLS={};
 async function audioUrl(s,force){const c=AUDIO_URLS[s.audio_path];if(!force&&c&&c.exp>Date.now()+600000)return c.url;
@@ -941,7 +989,7 @@ async function playAt(i,{pos=0,play=true}={}){
  S.qi=i;const tk=++S.token;S.hrow=null;S.needLoad=false;S.pendingPos=0;
  syncUI();
  try{
-  const url=await audioUrl(s);if(tk!==S.token)return;
+  const _c=AUDIO_URLS[s.audio_path];const url=(_c&&_c.exp>Date.now()+600000)?_c.url:await audioUrl(s);if(tk!==S.token)return;
   audio.src=url;
   if(pos>1)audio.addEventListener('loadedmetadata',()=>{try{audio.currentTime=pos}catch{}},{once:true});
   if(play)await audio.play();
@@ -960,6 +1008,14 @@ function toggleShuffle(){S.shuffle=!S.shuffle;store.set('realbt.shuffle',S.shuff
  if(S.queue.length){if(S.shuffle){const rest=S.queue.filter((_,i)=>i!==S.qi);shuf(rest);S.queue=c?[c,...rest]:rest;S.qi=c?0:-1}else{const base=S.orig.filter(id=>S.byId.has(id));const extra=S.queue.filter(id=>!base.includes(id));S.queue=[...base,...extra];S.qi=Math.max(0,S.queue.indexOf(c))}}
  syncUI();renderQueue()}
 function cycleRepeat(){S.repeat=S.repeat==='off'?'all':S.repeat==='all'?'one':'off';store.set('realbt.repeat',S.repeat);syncUI()}
+const pre=new Audio();pre.preload='auto';let preKey='';
+async function preloadNext(){
+ try{
+  if(!S.queue.length||S.repeat==='one')return;
+  let i=S.qi+1;if(i>=S.queue.length){if(S.repeat!=='all'||S.shuffle)return;i=0}
+  const s=song(S.queue[i]);if(!s||s.id===preKey)return;
+  preKey=s.id;const url=await audioUrl(s);pre.src=url;pre.load()
+ }catch{preKey=''}}
 function addToQueue(id,nextUp){if(!S.queue.length){setQueue([id],0);S.needLoad=true;S.pendingPos=0;syncUI();toast('대기열에 추가했어요');return}
  if(nextUp){S.queue.splice(S.qi+1,0,id);S.orig.push(id)}else{S.queue.push(id);S.orig.push(id)}
  toast(nextUp?'다음에 재생합니다':'대기열에 추가했어요');renderQueue()}
@@ -973,7 +1029,7 @@ let errRetry=0;
 audio.addEventListener('error',async()=>{const s=cur();if(!s||!audio.src)return;
  if(errRetry<1){errRetry++;try{const t=audio.currentTime;const url=await audioUrl(s,true);audio.src=url;audio.addEventListener('loadedmetadata',()=>{try{audio.currentTime=t}catch{}},{once:true});await audio.play();return}catch{}}
  errRetry=0;toast(navigator.onLine?'재생 중 오류가 발생했습니다':'네트워크 연결을 확인해 주세요','err')});
-audio.addEventListener('playing',()=>{errRetry=0});
+audio.addEventListener('playing',()=>{errRetry=0;preloadNext()});
 /* history (listening_history) */
 async function ensureHist(){if(S.hrow||S.hbusy)return;const s=cur();if(!s)return;const tk=S.token;S.hbusy=true;
  try{const d=await dbq(sb.from('listening_history').insert({user_id:S.user.id,song_id:s.id,playback_position:audio.currentTime||0}).select('id,song_id,played_at,playback_position').single());
@@ -1432,15 +1488,18 @@ window.addEventListener('scroll',fix,{passive:true});document.addEventListener('
 })();
 </script>
 <script>
-/* 모든 화면(내용이 많든 적든) 동일한 탄성: 맨 위/맨 아래에서 같은 강도로 늘어났다 돌아옴 */
+/* 부드러운 탄성: 손가락 드래그 / 빠른 플링 / 휠·트랙패드 모두 가장자리에서 부드럽게 제한 */
 (function(){
- const SEL='#main,.modal,#qp .ql',MAX=90,K=.4;let el=null,lastY=0,anchor=0,mode=0,wt=0;
+ const SEL='#main,.modal,#qp .ql',MAXD=130;
+ const rub=d=>Math.sign(d)*(1-1/(Math.abs(d)*.5/MAXD+1))*MAXD;
  const noScroll=t=>t.scrollHeight<=t.clientHeight+1;
  const atTop=t=>t.scrollTop<=0, atBot=t=>t.scrollTop+t.clientHeight>=t.scrollHeight-1;
- const rub=d=>Math.sign(d)*Math.min(MAX,Math.abs(d)*K);
- const back=t=>{t.style.transition='transform .4s cubic-bezier(.2,.8,.2,1)';t.style.transform=''};
+ const back=t=>{t.style.transition='transform .55s cubic-bezier(.2,.8,.2,1)';t.style.transform=''};
+ let el=null,lastY=0,anchor=0,mode=0,touching=false;
  document.addEventListener('touchstart',e=>{
+  touching=true;
   const t=e.target.closest(SEL);if(!t||e.touches.length!==1||e.target.closest('input,textarea,select,.rg')){el=null;return}
+  if(t._b){t._b.cancel();t._b=null}
   el=t;lastY=e.touches[0].clientY;mode=0;t.style.transition='none'},{passive:true});
  document.addEventListener('touchmove',e=>{
   if(!el||e.touches.length!==1)return;
@@ -1453,13 +1512,40 @@ window.addEventListener('scroll',fix,{passive:true});document.addEventListener('
   if((mode>0&&d<=0)||(mode<0&&d>=0)){el.style.transform='';mode=0;return}
   el.style.transition='none';el.style.transform='translateY('+rub(d)+'px)';
   if(e.cancelable)e.preventDefault()},{passive:false});
- const end=()=>{if(el&&el.style.transform)back(el);el=null;mode=0};
+ const end=()=>{touching=false;if(el&&el.style.transform)back(el);el=null;mode=0};
  document.addEventListener('touchend',end,{passive:true});document.addEventListener('touchcancel',end,{passive:true});
+ /* 세게 튕겨 올린 스크롤이 끝에 닿으면 속도만큼 살짝 밀렸다가 돌아옴 */
+ const track=new WeakMap();
+ function bounce(t,dir,amp){
+  if(t._b)t._b.cancel();
+  const a=dir*amp;
+  t._b=t.animate([{transform:'translateY(0)',easing:'cubic-bezier(.2,.7,.3,1)'},{transform:'translateY('+a+'px)',offset:.3,easing:'cubic-bezier(.25,.8,.3,1)'},{transform:'translateY(0)'}],{duration:650});
+  t._b.onfinish=t._b.oncancel=()=>{t._b=null}}
+ document.addEventListener('scroll',e=>{
+  const t=e.target;if(!(t instanceof Element)||!t.matches(SEL))return;
+  const now=performance.now(),st=t.scrollTop,s=track.get(t)||{st,t:now,v:0,pv:0};
+  const dt=now-s.t;
+  if(dt>0&&dt<200){s.pv=s.v;s.v=s.v*.3+((st-s.st)/dt)*.7}else{s.v=0;s.pv=0}
+  const max=t.scrollHeight-t.clientHeight;
+  const hitTop=st<=0&&s.st>0, hitBot=st>=max-1&&s.st<max-1;
+  if(!touching&&(hitTop||hitBot)){const v=Math.max(Math.abs(s.v),Math.abs(s.pv));if(v>.9)bounce(t,hitTop?1:-1,Math.min(48,v*14))}
+  s.st=st;s.t=now;track.set(t,s)},true);
+ /* 마우스 휠 / 트랙패드 */
+ let wAcc=0,wEl=null,wTimer=0;
+ const release=t=>{wAcc=0;back(t)};
  document.addEventListener('wheel',e=>{
-  const t=e.target.closest&&e.target.closest(SEL);if(!t||e.ctrlKey)return;
-  const up=e.deltaY<0;if(!(noScroll(t)||(up&&atTop(t))||(!up&&atBot(t))))return;
-  t.style.transition='transform .12s ease-out';t.style.transform='translateY('+(-Math.sign(e.deltaY)*Math.min(12,Math.abs(e.deltaY)*.25))+'px)';
-  clearTimeout(wt);wt=setTimeout(()=>back(t),120)},{passive:true});
+  if(e.ctrlKey)return;
+  const t=e.target.closest&&e.target.closest(SEL);if(!t)return;
+  const dy=e.deltaY,up=dy<0,max=t.scrollHeight-t.clientHeight;
+  const edge=max<=1||(up&&t.scrollTop<=0)||(!up&&t.scrollTop>=max-1);
+  if(!edge){if(wAcc&&wEl)release(wEl);return}
+  if(t._b){t._b.cancel();t._b=null}
+  if(wEl!==t){wAcc=0;wEl=t}
+  const add=Math.max(-40,Math.min(40,-dy*.35));
+  if(wAcc*add<0)wAcc=0;
+  wAcc=Math.max(-MAXD*3,Math.min(MAXD*3,wAcc+add));
+  t.style.transition='none';t.style.transform='translateY('+rub(wAcc)+'px)';
+  clearTimeout(wTimer);wTimer=setTimeout(()=>release(t),90)},{passive:true});
 })();
 </script>
 <script>
