@@ -445,7 +445,7 @@ input[type=text],input[type=email],input[type=password],input[type=search],selec
 
 /* 모바일: 둥근 미니 플레이어가 탭바 위에 떠 있는 형태 */
 @media(max-width:767px){
- #player{margin:0 8px 6px;border-radius:14px!important;border:0!important;background:rgba(240,240,244,.97)!important;box-shadow:0 2px 14px rgba(0,0,0,.14)}
+ #player{margin:0 8px 6px;border-radius:var(--mini-r)!important;border:0!important;background:rgba(240,240,244,.97)!important;box-shadow:0 2px 14px rgba(0,0,0,.14)}
  #bnav{border-top:.5px solid rgba(60,60,67,.25)!important}
 }
 
@@ -463,8 +463,42 @@ html,body{overscroll-behavior-y:contain!important;overscroll-behavior-x:none!imp
 #main{touch-action:pan-y}
 
 /* ===== 내용이 짧아도 부드러운 탄성 제한 (터치 기기) ===== */
-@media(hover:none){#main>.pg{min-height:calc(100% + 1px)}}
 #main,.modal,#qp .ql{will-change:transform}
+
+/* ===== 탄성은 JS로 통일(네이티브 탄성 끔) ===== */
+html,body,#main,.modal,#qp .ql{overscroll-behavior-y:none!important}
+/* ===== 검색바: 아이콘/글씨 겹침 해결 + 전체 지우기 ===== */
+.search input[type=search],.search input{padding-left:42px!important;padding-right:40px!important}
+.search input::-webkit-search-cancel-button,.search input::-webkit-search-decoration{-webkit-appearance:none;appearance:none;display:none}
+.search .ic{z-index:1;pointer-events:none}
+.sclear{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:28px;height:28px;display:none;place-items:center;border-radius:50%;z-index:2}
+.search.has .sclear{display:grid}
+.sclear svg{width:18px;height:18px;display:block}
+
+/* ===== 재생바: 직사각형 양옆 반원(스타디움) 모양 + 굵기 ===== */
+.rg{--th:5px;--tb:14px}
+#full .rg{--th:8px;--tb:18px;height:28px}
+.rg::-webkit-slider-runnable-track{height:var(--th)!important;border-radius:999px!important;background:linear-gradient(to right,#8e8e93 var(--p),#d1d1d6 var(--p))!important}
+.rg::-webkit-slider-thumb{width:var(--tb)!important;height:var(--tb)!important;margin-top:calc((var(--th) - var(--tb))/2)!important;border-radius:50%!important;background:#fff!important;box-shadow:0 0 0 .5px rgba(60,60,67,.3),0 1px 4px rgba(0,0,0,.3)}
+.rg::-moz-range-track{height:var(--th);border-radius:999px;background:#d1d1d6}
+.rg::-moz-range-progress{height:var(--th);border-radius:999px;background:#8e8e93}
+.rg::-moz-range-thumb{width:var(--tb);height:var(--tb);border-radius:50%;background:#fff;box-shadow:0 0 0 .5px rgba(60,60,67,.3),0 1px 4px rgba(0,0,0,.3)}
+/* 남은 시간 표시: 왼쪽 숫자는 왼쪽 정렬, 오른쪽 숫자는 오른쪽 정렬 */
+.seekrow .tm{width:48px}
+.seekrow .tm:first-child{text-align:left}
+.seekrow .tm:last-child{text-align:right}
+/* 소리조절: 아이콘 왼쪽 끝과 재생바 오른쪽 끝이 화면 양옆 끝에서 같은 간격 */
+#full .fv{gap:6px;padding:0}
+#full .fv .ib{margin-left:-10px}
+#full .fv .vol{flex:1;width:auto;min-width:0}
+
+/* 미니 플레이어 모서리 = 작은 앨범 사진 모서리와 동일 */
+:root{--mini-r:6px}
+.pinfo .cv{border-radius:var(--mini-r)!important}
+
+/* 전체화면 플레이어: 닫힐 때도 슬라이드 애니메이션이 보이도록 visibility를 늦게 전환 */
+#full{transition:transform .35s cubic-bezier(.2,.8,.2,1),visibility 0s linear .35s}
+#full.open{transition:transform .35s cubic-bezier(.2,.8,.2,1),visibility 0s linear 0s}
 </style>
 </head>
 <body>
@@ -987,11 +1021,11 @@ function updateProg(){
  const t=S.needLoad?S.pendingPos:audio.currentTime;
  if(S.seeking)return;
  $$('.seek').forEach(r=>{r.max=dur||1;r.value=t;r.style.setProperty('--p',(dur?t/dur*100:0)+'%')});
- $$('[data-pl=cur]').forEach(e=>e.textContent=fmtT(t));$$('[data-pl=dur]').forEach(e=>e.textContent=fmtT(dur));
+ $$('[data-pl=cur]').forEach(e=>e.textContent=fmtT(t));$$('[data-pl=dur]').forEach(e=>e.textContent='-'+fmtT(Math.max(0,dur-t)));
  const b=$('#mprogBar');if(b)b.style.width=(dur?t/dur*100:0)+'%';
  if('mediaSession' in navigator&&dur&&!audio.paused&&Math.floor(t)%5===0){try{navigator.mediaSession.setPositionState({duration:dur,position:Math.min(t,dur),playbackRate:audio.playbackRate})}catch{}}}
 document.addEventListener('input',e=>{const t=e.target;
- if(t.classList.contains('seek')){S.seeking=true;const dur=+t.max;t.style.setProperty('--p',(dur?t.value/dur*100:0)+'%');$$('[data-pl=cur]').forEach(x=>x.textContent=fmtT(+t.value));$$('.seek').forEach(r=>{if(r!==t){r.value=t.value;r.style.setProperty('--p',t.style.getPropertyValue('--p'))}})}
+ if(t.classList.contains('seek')){S.seeking=true;const dur=+t.max;t.style.setProperty('--p',(dur?t.value/dur*100:0)+'%');$$('[data-pl=cur]').forEach(x=>x.textContent=fmtT(+t.value));$$('[data-pl=dur]').forEach(x=>x.textContent='-'+fmtT(Math.max(0,dur-t.value)));$$('.seek').forEach(r=>{if(r!==t){r.value=t.value;r.style.setProperty('--p',t.style.getPropertyValue('--p'))}})}
  else if(t.classList.contains('vol')){audio.muted=false;audio.volume=+t.value;store.set('realbt.vol',audio.volume);syncUI()}
  else if(t.id==='libQ'){S.lib.q=t.value;$('#libList').innerHTML=libListHTML();$('#libCount').textContent=S.lists.lib.length+'곡'}
  else if(t.dataset.f&&t.dataset.k){const o=getT(t.dataset.k);if(o)o[t.dataset.f]=t.value}});
@@ -1003,7 +1037,7 @@ let lastMediaId=null;
 function setMedia(s){if(!('mediaSession' in navigator)||lastMediaId===s.id+artSrc(s))return;lastMediaId=s.id+artSrc(s);
  try{const src=s.artwork_path&&ART[s.artwork_path]?ART[s.artwork_path].url:null;
   navigator.mediaSession.metadata=new MediaMetadata({title:s.title,artist:s.artist||'',album:s.album||'REALBT',artwork:src?[{src,sizes:'600x600',type:'image/jpeg'}]:[]});
-  const h={play:()=>togglePlay(),pause:()=>audio.pause(),previoustrack:prev,nexttrack:()=>next(false),seekto:d=>{if(d.seekTime!=null)audio.currentTime=d.seekTime},seekbackward:()=>audio.currentTime=Math.max(0,audio.currentTime-10),seekforward:()=>audio.currentTime+=10};
+  const h={play:()=>togglePlay(),pause:()=>audio.pause(),previoustrack:prev,nexttrack:()=>next(false),seekto:d=>{if(d.seekTime!=null)audio.currentTime=d.seekTime},seekbackward:null,seekforward:null};
   Object.entries(h).forEach(([k,f])=>{try{navigator.mediaSession.setActionHandler(k,f)}catch{}})}catch{}}
 function setMediaState(){if('mediaSession' in navigator)try{navigator.mediaSession.playbackState=audio.paused?'paused':'playing'}catch{}}
 document.addEventListener('keydown',e=>{if(e.code==='Space'&&!/INPUT|TEXTAREA|SELECT|BUTTON/.test(e.target.tagName)&&cur()){e.preventDefault();togglePlay()}else if(e.key==='Escape'){if($('#modals').children.length)closeTop();else if($('#qp').classList.contains('open'))$('#qp').classList.remove('open');else $('#full').classList.remove('open')}});
@@ -1398,27 +1432,81 @@ window.addEventListener('scroll',fix,{passive:true});document.addEventListener('
 })();
 </script>
 <script>
-/* 스크롤할 내용이 없는 화면에서도 상하로 부드럽게 늘어났다 돌아오는 탄성 효과 */
+/* 모든 화면(내용이 많든 적든) 동일한 탄성: 맨 위/맨 아래에서 같은 강도로 늘어났다 돌아옴 */
 (function(){
- const SEL='#main,.modal,#qp .ql';let el=null,y0=0,pulling=false,wt=0;
+ const SEL='#main,.modal,#qp .ql',MAX=90,K=.4;let el=null,lastY=0,anchor=0,mode=0,wt=0;
  const noScroll=t=>t.scrollHeight<=t.clientHeight+1;
- const rub=d=>Math.sign(d)*Math.min(90,Math.abs(d)*.4);
+ const atTop=t=>t.scrollTop<=0, atBot=t=>t.scrollTop+t.clientHeight>=t.scrollHeight-1;
+ const rub=d=>Math.sign(d)*Math.min(MAX,Math.abs(d)*K);
  const back=t=>{t.style.transition='transform .4s cubic-bezier(.2,.8,.2,1)';t.style.transform=''};
  document.addEventListener('touchstart',e=>{
   const t=e.target.closest(SEL);if(!t||e.touches.length!==1||e.target.closest('input,textarea,select,.rg')){el=null;return}
-  el=t;y0=e.touches[0].clientY;pulling=false},{passive:true});
+  el=t;lastY=e.touches[0].clientY;mode=0;t.style.transition='none'},{passive:true});
  document.addEventListener('touchmove',e=>{
   if(!el||e.touches.length!==1)return;
-  if(!noScroll(el))return;
-  const d=e.touches[0].clientY-y0;if(Math.abs(d)<4&&!pulling)return;
-  pulling=true;el.style.transition='none';el.style.transform='translateY('+rub(d)+'px)';
+  const y=e.touches[0].clientY,step=y-lastY;lastY=y;
+  if(!mode){
+   if(step>0&&(noScroll(el)||atTop(el))){mode=1;anchor=y-step}
+   else if(step<0&&(noScroll(el)||atBot(el))){mode=-1;anchor=y-step}
+   else return}
+  const d=y-anchor;
+  if((mode>0&&d<=0)||(mode<0&&d>=0)){el.style.transform='';mode=0;return}
+  el.style.transition='none';el.style.transform='translateY('+rub(d)+'px)';
   if(e.cancelable)e.preventDefault()},{passive:false});
- const end=()=>{if(el&&pulling)back(el);el=null;pulling=false};
+ const end=()=>{if(el&&el.style.transform)back(el);el=null;mode=0};
  document.addEventListener('touchend',end,{passive:true});document.addEventListener('touchcancel',end,{passive:true});
  document.addEventListener('wheel',e=>{
-  const t=e.target.closest&&e.target.closest(SEL);if(!t||e.ctrlKey||!noScroll(t))return;
+  const t=e.target.closest&&e.target.closest(SEL);if(!t||e.ctrlKey)return;
+  const up=e.deltaY<0;if(!(noScroll(t)||(up&&atTop(t))||(!up&&atBot(t))))return;
   t.style.transition='transform .12s ease-out';t.style.transform='translateY('+(-Math.sign(e.deltaY)*Math.min(12,Math.abs(e.deltaY)*.25))+'px)';
   clearTimeout(wt);wt=setTimeout(()=>back(t),120)},{passive:true});
+})();
+</script>
+<script>
+(function(){
+ const X='<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="#8e8e93"/><path d="M6.8 6.8l6.4 6.4M13.2 6.8l-6.4 6.4" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>';
+ const sync=w=>{const i=w.querySelector('input');w.classList.toggle('has',!!(i&&i.value))};
+ const enhance=root=>{(root.querySelectorAll?root.querySelectorAll('.search'):[]).forEach(w=>{
+  const i=w.querySelector('input');if(!i)return;
+  if(!w.querySelector('.sclear')){const b=document.createElement('button');b.type='button';b.className='sclear';b.setAttribute('aria-label','전체 지우기');b.innerHTML=X;w.appendChild(b)}
+  sync(w)})};
+ document.addEventListener('input',e=>{const w=e.target.closest&&e.target.closest('.search');if(w)sync(w)});
+ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('.sclear');if(!b)return;
+  e.preventDefault();e.stopPropagation();const w=b.closest('.search'),i=w.querySelector('input');
+  i.value='';i.dispatchEvent(new Event('input',{bubbles:true}));sync(w);i.focus()},true);
+ new MutationObserver(m=>{m.forEach(r=>r.addedNodes.forEach(n=>{if(n.nodeType===1){if(n.matches&&n.matches('.search'))enhance(n.parentNode);else enhance(n)}}))}).observe(document.body,{childList:true,subtree:true});
+ enhance(document);
+})();
+</script>
+<script>
+/* 전체화면 플레이어: 아래로 끌어내려 닫기 (손가락을 따라다니다가, 충분히 내리면 숨기기 버튼과 같은 애니메이션으로 닫힘) */
+(function(){
+ const f=document.getElementById('full');if(!f)return;
+ let on=false,drag=false,x0=0,y0=0,dy=0,lastY=0,lastT=0,v=0;
+ const reset=()=>{f.style.transition='';f.style.transform=''};
+ f.addEventListener('touchstart',e=>{
+  if(!f.classList.contains('open')||e.touches.length!==1||e.target.closest('input,textarea,select,.rg')){on=false;return}
+  on=true;drag=false;x0=e.touches[0].clientX;y0=lastY=e.touches[0].clientY;lastT=Date.now();dy=0;v=0},{passive:true});
+ f.addEventListener('touchmove',e=>{
+  if(!on||e.touches.length!==1)return;
+  const t=e.touches[0],dx=t.clientX-x0;dy=t.clientY-y0;
+  if(!drag){
+   if(dy>8&&Math.abs(dy)>Math.abs(dx)*1.2){drag=true;f.style.transition='none'}
+   else if(Math.abs(dx)>10||dy<-10){on=false;return}
+   else return}
+  const n=Date.now();if(n>lastT){v=(t.clientY-lastY)/(n-lastT)}lastY=t.clientY;lastT=n;
+  f.style.transform='translateY('+Math.max(0,dy)+'px)';
+  if(e.cancelable)e.preventDefault()},{passive:false});
+ const end=()=>{
+  if(!on||!drag){on=false;drag=false;return}
+  on=false;drag=false;
+  const far=dy>f.clientHeight*.25||(v>.6&&dy>40);
+  f.style.transition='';
+  if(far){f.style.transform='';f.classList.remove('open')}
+  else{f.style.transition='transform .3s cubic-bezier(.2,.8,.2,1)';f.style.transform='translateY(0)';
+   const done=()=>{f.style.transition='';f.style.transform='';f.removeEventListener('transitionend',done)};f.addEventListener('transitionend',done)}
+ };
+ f.addEventListener('touchend',end,{passive:true});f.addEventListener('touchcancel',end,{passive:true});
 })();
 </script>
 </body>
