@@ -4,7 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>REALBT</title>
-<meta name="theme-color" content="#ffffff">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -15,7 +17,7 @@
 <style>
 :root{--bg:#000;--bg2:#1c1c1e;--bg3:#2c2c2e;--bg4:#3a3a3c;--line:rgba(84,84,88,.5);--tx:#fff;--tx2:rgba(235,235,245,.62);--tx3:rgba(235,235,245,.32);--ac:#fa243c;--ac2:#fb5c74;--grad:linear-gradient(135deg,#fa233b,#fb5c74);--ok:#32d74b;--err:#ff453a;--r:14px;--sb:224px;--sat:env(safe-area-inset-top);--sab:env(safe-area-inset-bottom)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",Roboto,sans-serif;font-size:15px;line-height:1.4;overflow:hidden;overscroll-behavior:none}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",Roboto,sans-serif;font-size:15px;line-height:1.4;overflow:hidden}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer;background:none;border:0;padding:0}
 .hidden{display:none!important}
@@ -327,10 +329,10 @@ input:focus,select:focus,textarea:focus{box-shadow:0 0 0 2px rgba(250,36,60,.55)
 .btn.dng{background:rgba(255,69,58,.55)}
 .btn:not(.pri):not(.dng){background:rgba(250,36,60,.55)}
 /* 확대/축소 및 좌우 스크롤 제한, 상하 스크롤은 부드럽게 */
-html,body{overflow-x:hidden!important;max-width:100vw;overscroll-behavior:none!important;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html,body{overflow-x:hidden!important;max-width:100vw;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 #app,#main,#side{overflow-x:hidden!important;max-width:100%}
-#main,#side,#qp .ql,.modal{overscroll-behavior:contain;scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
-#main{touch-action:pan-y;overscroll-behavior-y:none}
+#main,#side,#qp .ql,.modal{scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
+#main{touch-action:pan-y}
 .hs,.chips{touch-action:pan-x pan-y;overscroll-behavior-x:contain}
 
 /* ===== 전체 라이트 모드 ===== */
@@ -457,16 +459,12 @@ input[type=text],input[type=email],input[type=password],input[type=search],selec
 .acard .tabs button.on{background:#fff!important;color:#000!important;font-weight:700;box-shadow:0 1px 4px rgba(0,0,0,.2),0 0 0 .5px rgba(60,60,67,.12)}
 .acard input[type=text],.acard input[type=email],.acard input[type=password]{background:#f2f2f7!important;border:.5px solid rgba(60,60,67,.18)!important}
 
-/* ===== 상하 스크롤: 딱딱한 차단(none) 제거 -> 부드러운 탄성 제한 ===== */
-html,body{overscroll-behavior-y:contain!important;overscroll-behavior-x:none!important}
-#main,#side,#qp .ql,.modal{overscroll-behavior-y:contain!important;overscroll-behavior-x:none!important;scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
+/* ===== 좌우 오버스크롤만 차단 ===== */
+html,body,#main,#side,#qp .ql,.modal{overscroll-behavior-x:none!important}
+#main,#side,#qp .ql,.modal{scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
 #main{touch-action:pan-y}
 
-/* ===== 내용이 짧아도 부드러운 탄성 제한 (터치 기기) ===== */
-#main,.modal,#qp .ql{will-change:transform}
 
-/* ===== 탄성은 JS로 통일(네이티브 탄성 끔) ===== */
-html,body,#main,.modal,#qp .ql{overscroll-behavior-y:none!important}
 /* ===== 검색바: 아이콘/글씨 겹침 해결 + 전체 지우기 ===== */
 .search input[type=search],.search input{padding-left:42px!important;padding-right:40px!important}
 .search input::-webkit-search-cancel-button,.search input::-webkit-search-decoration{-webkit-appearance:none;appearance:none;display:none}
@@ -543,6 +541,85 @@ html,body,#main,.modal,#qp .ql{overscroll-behavior-y:none!important}
 #full .ctl .pp.lg{width:76px;height:76px;border-radius:50%;background:var(--tx)!important;color:#fff!important}
 #full .ctl .pp.lg .ic{width:42px;height:42px}
 @media(max-width:767px){#player .ctl .ib.hm{display:none}}
+
+/* ===== 공유 / 알림 배지 ===== */
+.bdg{margin-left:auto;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--ac);color:#fff;font-size:11px;font-weight:700;display:inline-grid;place-items:center;line-height:1}
+#bnav .nv{position:relative}
+#bnav .nv .bdg{position:absolute;top:0;left:calc(50% + 4px);margin:0;min-width:16px;height:16px;font-size:10px}
+.shr{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:12px;align-items:center;padding:8px 4px;border-bottom:.5px solid rgba(60,60,67,.18)}
+.shr:last-child{border-bottom:0}
+.shr .cv{width:52px;height:52px}
+.shr .t{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.shr .s{color:var(--tx2);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sha{display:flex;align-items:center;gap:6px}
+@media(max-width:1023px){#side .nv{position:relative}#side .nv .bdg{position:absolute;top:2px;left:calc(50% + 4px);margin:0;min-width:16px;height:16px;font-size:10px}}
+@media(max-width:767px){#bnav{grid-template-columns:repeat(6,1fr)!important}#bnav .nv{font-size:10px}.shr{grid-template-columns:44px minmax(0,1fr);}.shr .cv{width:44px;height:44px}.sha{grid-column:1/-1;justify-content:flex-end}}
+
+/* ===== 재생바: 더 두껍고 둥글게 ===== */
+.rg{--th:8px}
+#full .rg,#full .fseek .rg{--th:12px;height:30px}
+.rg::-webkit-slider-runnable-track{border-radius:999px!important}
+.rg::-moz-range-track{border-radius:999px!important}
+.rg::-moz-range-progress{border-radius:999px 0 0 999px!important}
+.mprog{height:4px;left:0;right:0;top:auto;bottom:0;overflow:hidden}
+.mprog i{border-radius:0}
+
+/* ===== 모바일 미니 플레이어: 배경과 같은 색 + 테두리 + 그림자 ===== */
+@media(max-width:767px){#player{background:#fff!important;border:1px solid rgba(60,60,67,.28)!important;box-shadow:0 4px 18px rgba(0,0,0,.18),0 1px 4px rgba(0,0,0,.1)!important}}
+
+/* ===== 다크 모드: 기기 설정을 자동으로 따름 ===== */
+@media(prefers-color-scheme:dark){
+:root{color-scheme:dark;--bg:#000;--bg2:#1c1c1e;--bg3:#2c2c2e;--bg4:#3a3a3c;--line:rgba(84,84,88,.5);--tx:#fff;--tx2:rgba(235,235,245,.62);--tx3:rgba(235,235,245,.34);--err:#ff453a;--ok:#32d74b}
+html,body,#main,#boot,.upbar{background:#000!important;color:#fff}
+.logo{color:#fff!important;-webkit-text-fill-color:#fff!important}
+#side{background:#1c1c1e!important;border-right:.5px solid rgba(84,84,88,.6)!important}
+#side .nv{color:#fff}
+#side .nv.on{background:rgba(255,255,255,.14)!important;color:#fff!important}
+#side .nv:hover:not(.on){background:rgba(255,255,255,.08)!important}
+.sbpl{border-top:.5px solid rgba(84,84,88,.6)!important}
+.sbpl .nv{color:#fff!important}
+#bnav{background:rgba(28,28,30,.94)!important;border-top:.5px solid rgba(84,84,88,.6)!important}
+#bnav .nv{color:rgba(235,235,245,.6)!important}
+#player{background:rgba(28,28,30,.94)!important;border-top:.5px solid rgba(84,84,88,.6)!important}
+.pp,.pp.lg{color:#fff}
+#player .ctl .pp,#full .ctl .pp.lg{color:#000!important}
+.rg::-webkit-slider-runnable-track{background:linear-gradient(to right,#e5e5ea var(--p),#48484a var(--p))!important}
+.rg::-moz-range-track{background:#48484a}
+.rg::-moz-range-progress{background:#e5e5ea}
+.row{border-bottom:.5px solid rgba(84,84,88,.5)!important}
+.shr{border-bottom:.5px solid rgba(84,84,88,.5)}
+.nv:hover,.row:hover,.qi:hover{background:rgba(255,255,255,.07)!important}
+.ib:hover{background:rgba(255,255,255,.1)}
+.row.cur,.qi.cur{background:rgba(250,36,60,.18)!important}
+.cv,.card .cv,.pinfo .cv{box-shadow:0 1px 6px rgba(0,0,0,.6)}
+.card .cv,.card .cvw .pcover{box-shadow:0 1px 4px rgba(0,0,0,.6)}
+.pcover{box-shadow:0 6px 24px rgba(0,0,0,.6)}
+#full .fart .cv{box-shadow:0 12px 40px rgba(0,0,0,.6)}
+.btn:not(.pri):not(.dng),.btn:not(.pri):not(.dng):hover,.btn.dng,.btn.dng:hover{background:#2c2c2e!important}
+.chip{background:#2c2c2e;color:#fff}
+input[type=text],input[type=email],input[type=password],input[type=search],select,textarea{background:#2c2c2e!important}
+.card2,.uit{background:#1c1c1e!important}
+.dz{background:#1c1c1e!important;border:1.5px dashed rgba(235,235,245,.3)!important}
+.tabs{background:#2c2c2e!important}
+.tabs button.on{background:#48484a!important;box-shadow:none}
+#qp{background:#1c1c1e!important;border-left:.5px solid rgba(84,84,88,.6)!important}
+#full{background:linear-gradient(180deg,#3a1218 0,#000 70%)!important}
+#auth,#setup{background:#000!important}
+.acard{background:#1c1c1e!important;border:.5px solid rgba(84,84,88,.6)!important;box-shadow:0 12px 44px rgba(0,0,0,.7)!important}
+.acard .tabs{background:#2c2c2e!important}
+.acard .tabs button{color:rgba(235,235,245,.65)!important}
+.acard .tabs button.on{background:#48484a!important;color:#fff!important;box-shadow:none!important}
+.acard input[type=text],.acard input[type=email],.acard input[type=password]{background:#2c2c2e!important;border:.5px solid rgba(84,84,88,.8)!important}
+.modal{background:rgba(44,44,46,.97)!important;box-shadow:0 10px 40px rgba(0,0,0,.6)}
+.modal::before{background:rgba(235,235,245,.3)!important}
+#modals>.mb{background:rgba(0,0,0,.55)!important}
+.toast{background:#2c2c2e!important;color:#fff;box-shadow:0 6px 24px rgba(0,0,0,.6)!important}
+.toast.err{background:#3a1d22!important;color:#ff8a93;border-color:#6b2c38!important}
+.toast.ok{background:#12301d!important;color:#7be495;border-color:#245c42!important}
+}
+@media(prefers-color-scheme:dark) and (max-width:767px){
+#player{background:#000!important;border:1px solid rgba(255,255,255,.22)!important;box-shadow:0 4px 18px rgba(0,0,0,.7),0 0 0 .5px rgba(255,255,255,.06)!important}
+}
 </style>
 </head>
 <body>
@@ -579,6 +656,7 @@ html,body,#main,.modal,#qp .ql{overscroll-behavior-y:none!important}
 <symbol id="i-logout" viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></symbol>
 <symbol id="i-image" viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></symbol>
 <symbol id="i-link" viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></symbol>
 <symbol id="i-user" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></symbol>
 </defs></svg>
 
@@ -678,7 +756,7 @@ const S={user:null,profile:null,songs:[],byId:new Map(),favs:new Set(),playlists
  view:{name:'home',param:null},lib:{q:'',f:'all',sort:'added'},plEdit:false,lists:{},
  queue:[],orig:[],qi:-1,shuffle:store.get('realbt.shuffle',false),repeat:store.get('realbt.repeat','off'),
  token:0,hrow:null,hbusy:false,needLoad:false,pendingPos:0,seeking:false,
- up:[],running:0,edit:null,usage:null,installEvt:null,loaded:false};
+ up:[],running:0,edit:null,usage:null,installEvt:null,loaded:false,shares:[],sharesOk:true,sharesLoaded:false};
 const song=id=>S.byId.get(id), cur=()=>song(S.queue[S.qi]);
 const plIds=pid=>S.pls.filter(r=>r.playlist_id===pid).sort((a,b)=>a.position-b.position).map(r=>r.song_id).filter(id=>S.byId.has(id));
 const plRows=pid=>S.pls.filter(r=>r.playlist_id===pid&&S.byId.has(r.song_id)).sort((a,b)=>a.position-b.position);
@@ -824,29 +902,31 @@ async function reloadData(soft){
   if(!S.profile||S.profile.id!==uid){let p=await dbq(sb.from('profiles').select('*').eq('id',uid).maybeSingle());
    if(!p){p=await dbq(sb.from('profiles').upsert({id:uid,username:(S.user.email||'user').split('@')[0]}).select().single())}S.profile=p}
   await ensureArt(allArtPaths());
+  await loadShares();
   if(S.loaded||soft){renderSide();softRender();syncUI()}
  }catch(e){fail(e,'데이터를 불러오지 못했습니다');if(!S.loaded)$('#main').innerHTML=`<div class="empty">${ic('music')}<div>데이터를 불러오지 못했습니다.</div><button class="btn" data-a="reload">다시 시도</button></div>`}
 }
-let rtChan=null,rtTimer=null;
+let rtChan=null,rtChan2=null,rtTimer=null;
 function setupRealtime(){teardownRealtime();
- try{rtChan=sb.channel('realbt-sync');['songs','favorites','playlists','playlist_songs'].forEach(t=>rtChan.on('postgres_changes',{event:'*',schema:'public',table:t},()=>{clearTimeout(rtTimer);rtTimer=setTimeout(()=>reloadData(true),700)}));rtChan.subscribe()}catch(e){console.warn('realtime',e)}}
-function teardownRealtime(){try{if(rtChan)sb.removeChannel(rtChan)}catch{}rtChan=null}
+ try{rtChan=sb.channel('realbt-sync');['songs','favorites','playlists','playlist_songs'].forEach(t=>rtChan.on('postgres_changes',{event:'*',schema:'public',table:t},()=>{clearTimeout(rtTimer);rtTimer=setTimeout(()=>reloadData(true),700)}));rtChan.subscribe()}catch(e){console.warn('realtime',e)}
+ try{rtChan2=sb.channel('realbt-shares').on('postgres_changes',{event:'*',schema:'public',table:'song_shares'},()=>{clearTimeout(rtTimer);rtTimer=setTimeout(()=>reloadData(true),700)}).subscribe()}catch(e){console.warn('realtime shares',e)}}
+function teardownRealtime(){try{if(rtChan)sb.removeChannel(rtChan)}catch{}try{if(rtChan2)sb.removeChannel(rtChan2)}catch{}rtChan=null;rtChan2=null}
 document.addEventListener('visibilitychange',()=>{if(document.hidden){flushHist();saveLast()}else if(S.user&&S.loaded){reloadData(true)}});
 setInterval(()=>{if(S.user&&S.loaded&&!document.hidden)ensureArt(allArtPaths())},25*60*1000);
 
 /* =====================================================================
    Shell / routing
    ===================================================================== */
-const NAV=[['home','home','홈'],['library','library','보관함'],['upload','upload','업로드'],['playlists','playlist','플레이리스트'],['settings','user','내 정보']];
+const NAV=[['home','home','홈'],['library','library','보관함'],['upload','upload','업로드'],['playlists','playlist','플레이리스트'],['shares','share','공유'],['settings','user','내 정보']];
 function buildShell(){
- $('#side').innerHTML=`<div class="logo">REALBT</div>${NAV.map(([n,i,l])=>`<button class="nv" data-go="${n}" data-nav="${n}">${ic(i)}<span>${l}</span></button>`).join('')}<button class="nv" data-go="library/liked" data-nav="liked">${ic('heart')}<span>좋아요</span></button><div class="sbpl" id="sbpl"></div>`;
- $('#bnav').innerHTML=NAV.map(([n,i,l])=>`<button class="nv" data-go="${n}" data-nav="${n}">${ic(i)}<span>${l}</span></button>`).join('');
- renderSide();
+ $('#side').innerHTML=`<div class="logo">REALBT</div>${NAV.map(([n,i,l])=>`<button class="nv" data-go="${n}" data-nav="${n}">${ic(i)}<span>${l}</span>${n==='shares'?'<b class="bdg hidden" data-bdg></b>':''}</button>`).join('')}<button class="nv" data-go="library/liked" data-nav="liked">${ic('heart')}<span>좋아요</span></button><div class="sbpl" id="sbpl"></div>`;
+ $('#bnav').innerHTML=NAV.map(([n,i,l])=>`<button class="nv" data-go="${n}" data-nav="${n}">${ic(i)}<span>${l}</span>${n==='shares'?'<b class="bdg hidden" data-bdg></b>':''}</button>`).join('');
+ renderSide();updateBadge();
 }
 function renderSide(){const el=$('#sbpl');if(!el)return;el.innerHTML=S.playlists.map(p=>`<button class="nv" data-go="playlist/${p.id}" data-nav="pl-${p.id}">${ic('music','sm')}<span>${esc(p.name)}</span></button>`).join('')}
 function parseHash(){const h=(location.hash||'#/home').replace(/^#\/?/,'').split('/');const name=h[0]||'home';let param=h[1]||null;
  if(name==='library'&&param==='liked'){S.lib.f='liked'}
- S.view={name:['home','library','upload','playlists','playlist','settings'].includes(name)?name:'home',param}}
+ S.view={name:['home','library','upload','playlists','playlist','shares','settings'].includes(name)?name:'home',param}}
 window.addEventListener('hashchange',()=>{if(!S.user||!S.loaded)return;parseHash();S.plEdit=false;render();$('#main').scrollTop=0});
 function go(path){const target='#/'+path;if(location.hash===target){parseHash();render()}else location.hash=target}
 function navActive(){const v=S.view;const key=v.name==='library'&&S.lib.f==='liked'&&v.param==='liked'?'liked':v.name==='playlist'?'pl-'+v.param:v.name;
@@ -915,7 +995,7 @@ VIEWS.library=(m,param)=>{
  <div class="bar"><div class="search">${ic('search')}<input type="search" id="libQ" placeholder="제목 또는 아티스트 검색" value="${esc(S.lib.q)}" autocomplete="off"></div>
  <select id="libSort" style="width:auto" ${['recent','added'].includes(S.lib.f)?'disabled':''}>${Object.entries(SORTS).map(([k,v])=>`<option value="${k}" ${S.lib.sort===k?'selected':''}>${v[0]}</option>`).join('')}</select></div>
  <div class="chips" style="margin-bottom:14px">${F.map(([k,l])=>`<button class="chip ${S.lib.f===k?'on':''}" data-a="libf" data-f="${k}">${l}</button>`).join('')}</div>
- <div class="bar" style="margin-bottom:8px"><span class="muted" id="libCount"></span><span style="flex:1"></span><button class="btn sm" data-a="playlib">${ic('play','sm')} 전체 재생</button><button class="btn sm" data-a="shufflib">${ic('shuffle','sm')} 셔플</button></div>
+ <div class="bar" style="margin-bottom:8px"><span class="muted" id="libCount"></span><span style="flex:1"></span><button class="btn sm" data-a="playlib">${ic('play','sm')} 전체 재생</button><button class="btn sm" data-a="shufflib">${ic('shuffle','sm')} 셔플</button><button class="btn sm" data-a="dlall">${ic('download','sm')} 전체 다운로드</button></div>
  <div id="libList"></div></div>`;
  $('#libList').innerHTML=libListHTML();$('#libCount').textContent=S.lists.lib.length+'곡'};
 VIEWS.playlists=m=>{
@@ -940,7 +1020,7 @@ VIEWS.upload=m=>{
 VIEWS.settings=m=>{
  const u=S.user;
  m.innerHTML=`<div class="pg"><h1>내 정보</h1><div class="setg">
- <div class="card2"><h2>계정</h2><div class="muted" style="margin-bottom:10px">${esc(u.email)}</div><label class="f">사용자 이름</label><div style="display:flex;gap:8px"><input type="text" id="uname" value="${esc(S.profile?.username||'')}" maxlength="30"><button class="btn" data-a="saveuname">저장</button></div></div>
+ <div class="card2"><h2>계정</h2><div class="muted" style="margin-bottom:10px">${esc(u.email)}</div><label class="f">사용자 이름</label><div style="display:flex;gap:8px"><input type="text" id="uname" value="${esc(S.profile?.username||'')}" maxlength="30"><button class="btn" data-a="saveuname">저장</button></div><div class="muted" style="font-size:12px;margin-top:6px">다른 사람이 내 이메일 또는 이 이름으로 곡을 공유할 수 있어요.</div></div>
  <div class="card2"><h2>비밀번호 변경</h2><div style="display:flex;gap:8px"><input type="password" id="newpw" placeholder="새 비밀번호 (6자 이상)" autocomplete="new-password"><button class="btn" data-a="changepw">변경</button></div></div>
  <div class="card2"><h2>저장 공간</h2><div class="muted" id="usage2">계산 중…</div><div class="pbar" style="margin-top:10px"><i id="usageBar"></i></div><div class="muted" style="font-size:12px">Supabase 무료 플랜 기준 1GB 대비 사용량입니다.</div></div>
  <div class="card2"><h2>데이터 백업 / 복원</h2><div class="muted" style="margin-bottom:10px;font-size:13px">곡 정보, 플레이리스트, 좋아요, 청취 기록을 JSON으로 저장합니다. (음원 파일은 클라우드에 그대로 보관됩니다)</div><div class="acts" style="margin:0"><button class="btn" data-a="backup">${ic('download','sm')} 백업 내려받기</button><button class="btn" data-a="restore">${ic('upload','sm')} 백업에서 복원</button></div></div>
@@ -1122,12 +1202,14 @@ function openMenu(id,plId){
  <button class="nv" data-m="next">${ic('play')}<span>다음에 재생</span></button>
  <button class="nv" data-m="addpl">${ic('playlist')}<span>플레이리스트에 추가</span></button>
  <button class="nv" data-m="like">${ic(fav?'heart-fill':'heart')}<span>${fav?'좋아요 취소':'좋아요'}</span></button>
+ <button class="nv" data-m="share">${ic('share')}<span>다른 계정에 공유</span></button>
+ <button class="nv" data-m="dl">${ic('download')}<span>음원 다운로드</span></button>
  <button class="nv" data-m="edit">${ic('edit')}<span>정보 수정 · 앨범 이미지 변경</span></button>
  ${plId?`<button class="nv" data-m="rmpl">${ic('close')}<span>이 플레이리스트에서 제거</span></button>`:''}
  <button class="nv" data-m="del" style="color:var(--err)">${ic('trash')}<span>삭제</span></button></div>`,{nofocus:true});
  mb.addEventListener('click',async e=>{const b=e.target.closest('[data-m]');if(!b)return;const m=b.dataset.m;mb.close();
   if(m==='queue')addToQueue(id,false);else if(m==='next')addToQueue(id,true);
-  else if(m==='addpl')openAddToPlaylist(id);else if(m==='like')toggleLike(id);else if(m==='edit')openEdit(id);
+  else if(m==='addpl')openAddToPlaylist(id);else if(m==='like')toggleLike(id);else if(m==='edit')openEdit(id);else if(m==='share')openShare(id);else if(m==='dl')downloadSong(s);
   else if(m==='rmpl')removeFromPlaylist(plId,id);else if(m==='del')deleteSong(id)})}
 function openAddToPlaylist(id){
  const draw=()=>`<h2>플레이리스트에 추가</h2><div class="menu">${S.playlists.map(p=>{const has=S.pls.some(r=>r.playlist_id===p.id&&r.song_id===id);return `<button class="nv" data-m="t" data-id="${p.id}">${ic(has?'check':'music')}<span>${esc(p.name)}</span></button>`}).join('')||'<div class="muted" style="padding:8px">플레이리스트가 없어요.</div>'}
@@ -1147,6 +1229,65 @@ async function reorderPlaylist(pid,from,to){
  const [m]=rows.splice(from,1);rows.splice(to,0,m);rows.forEach((r,i)=>r.position=i);
  render();
  try{await dbq(sb.from('playlist_songs').upsert(rows.map(r=>({id:r.id,playlist_id:r.playlist_id,song_id:r.song_id,position:r.position}))))}catch(e){fail(e,'순서 저장 실패');reloadData(true)}}
+/* ---------- download / share ---------- */
+const safeName=n=>String(n||'').replace(/[\\/:*?"<>|\u0000-\u001f]/g,'_').trim().slice(0,120)||'song';
+async function downloadSong(s,quiet){
+ try{const name=safeName((s.artist?s.artist+' - ':'')+s.title)+'.mp3';
+  const {data,error}=await sb.storage.from(BUCKET).createSignedUrl(s.audio_path,600,{download:name});if(error)throw error;
+  const a=document.createElement('a');a.href=data.signedUrl;a.download=name;a.rel='noopener';document.body.appendChild(a);a.click();a.remove();
+  if(!quiet)toast('다운로드를 시작했어요','ok');return true}catch(e){fail(e,'다운로드 실패');return false}}
+const sharesMissing=e=>!!e&&(['42P01','PGRST205','PGRST202'].includes(e.code)||/song_shares|send_song_share|respond_song_share/.test(e.message||''));
+function shareFail(e,pre){if(sharesMissing(e))toast('공유 기능 설정이 필요해요. 공유 탭의 안내를 확인해 주세요','err');else fail(e,pre)}
+const pendingIn=()=>S.shares.filter(r=>r.to_user===S.user.id&&r.status==='pending');
+function updateBadge(){const n=S.user?pendingIn().length:0;$$('[data-bdg]').forEach(b=>{b.textContent=n>99?'99+':n;b.classList.toggle('hidden',!n)})}
+async function loadShares(){
+ try{const rows=await dbq(sb.from('song_shares').select('*').order('created_at',{ascending:false}).limit(200));
+  const before=S.sharesLoaded?pendingIn().length:0;S.shares=rows;S.sharesOk=true;
+  if(S.sharesLoaded&&pendingIn().length>before)toast('새로 공유받은 곡이 있어요');
+  S.sharesLoaded=true;await ensureArt(rows.map(r=>r.artwork_path))}
+ catch(e){S.shares=[];S.sharesOk=false;if(!sharesMissing(e))console.warn('shares',e)}
+ updateBadge()}
+function openShare(id){
+ const s=song(id);if(!s)return;
+ const mb=modal(`<h2>다른 계정에 공유</h2><div class="mhead" style="border:0;padding:0;margin-bottom:14px">${cvImg(artSrc(s))}<div style="min-width:0"><div class="t" style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(s.title)}</div><div class="muted">${esc(s.artist||'알 수 없는 아티스트')}</div></div></div>
+ <label class="f">받는 사람 계정</label><input type="text" id="shTo" placeholder="이메일 또는 사용자 이름" autocomplete="off" autocapitalize="off" maxlength="120">
+ <div class="muted" style="font-size:12px;margin-top:8px">상대가 수락하면 곡 정보와 앨범 이미지, 음원이 상대 보관함에 복사돼요.</div>
+ <div class="mf"><button class="btn" data-m="no">취소</button><button class="btn pri" data-m="go">보내기</button></div>`);
+ const inp=$('#shTo',mb),go=$('[data-m=go]',mb);
+ const send=async()=>{const v=inp.value.trim();if(!v){inp.focus();return}go.disabled=true;
+  try{await dbq(sb.rpc('send_song_share',{p_to:v,p_song_id:id}));mb.close();toast('공유 요청을 보냈어요','ok');await loadShares();softRender()}
+  catch(e){go.disabled=false;if(sharesMissing(e))shareFail(e);else toast(isNet(e)?'네트워크 오류: 연결을 확인해 주세요':(e.message||'보내지 못했어요'),'err')}};
+ inp.addEventListener('keydown',e=>{if(e.key==='Enter')send()});
+ mb.addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(!b)return;if(b.dataset.m==='go')send();else mb.close()})}
+async function acceptShare(r,btn){
+ const uid=S.user.id,st=sb.storage.from(BUCKET),dest=`${uid}/audio/${r.audio_path.split('/').pop()}`;
+ const had=S.songs.some(x=>x.audio_path===dest);let artDest=null,copied=false;
+ if(btn)btn.disabled=true;
+ try{
+  if(!had){
+   if(r.artwork_path){const d=`${uid}/art/${uuid()}.jpg`;const {error}=await st.copy(r.artwork_path,d);if(!error)artDest=d}
+   const {error}=await st.copy(r.audio_path,dest);if(error)throw error;copied=true;
+   const row=await dbq(sb.from('songs').insert({user_id:uid,title:r.title,artist:r.artist||null,album:r.album||null,duration:r.duration||0,audio_path:dest,artwork_path:artDest}).select().single());
+   S.songs.unshift(row);S.byId.set(row.id,row);await ensureArt([artDest])}
+  await dbq(sb.rpc('respond_song_share',{p_id:r.id,p_accept:true}));
+  toast(had?'이미 보관함에 있는 곡이에요':'보관함에 추가했어요','ok');await loadShares();softRender();renderSide()
+ }catch(e){
+  const rm=[];if(artDest&&!copied)rm.push(artDest);if(copied&&!S.songs.some(x=>x.audio_path===dest)){rm.push(dest);if(artDest)rm.push(artDest)}if(rm.length)st.remove(rm).then(()=>{},()=>{});
+  if(btn)btn.disabled=false;
+  if(e&&/not found|does not exist|404/i.test(e.message||e.error||''))toast('원본 파일을 찾을 수 없어요. 상대가 곡을 삭제했을 수 있어요','err');else shareFail(e,'받기 실패')}}
+function shareRow(r,dir){
+ const inn=dir==='in',who=inn?`보낸 사람 ${esc(r.from_name||'알 수 없음')}`:`받는 사람 ${esc(r.to_name||'')}`;
+ const label={pending:'대기 중',accepted:'수락됨',declined:'거절됨'}[r.status]||r.status;
+ const acts=inn&&r.status==='pending'?`<button class="btn sm" data-a="shdecline" data-id="${r.id}">거절</button><button class="btn sm pri" data-a="shaccept" data-id="${r.id}">수락</button>`
+  :`<span class="st">${label}</span><button class="ib" data-a="shrm" data-id="${r.id}" aria-label="${r.status==='pending'?'취소':'삭제'}">${ic(r.status==='pending'?'close':'trash')}</button>`;
+ return `<div class="shr">${cvImg(pathSrc(r.artwork_path,r.id+r.title))}<div style="min-width:0"><div class="t">${esc(r.title)}</div><div class="s">${esc(r.artist||'알 수 없는 아티스트')}${r.album?' · '+esc(r.album):''}</div><div class="s">${who} · ${new Date(r.created_at).toLocaleDateString('ko-KR')}</div></div><div class="sha">${acts}</div></div>`}
+VIEWS.shares=m=>{
+ if(!S.sharesOk){m.innerHTML=`<div class="pg"><h1>공유</h1><div class="card2"><h2>공유 기능 설정이 필요해요</h2><div class="muted" style="font-size:13px;line-height:1.6">Supabase 대시보드 → SQL Editor에서 함께 제공된 <b>share_setup.sql</b>을 한 번 실행한 뒤 새로고침해 주세요.</div></div></div>`;return}
+ const uid=S.user.id,rank=r=>r.status==='pending'?0:1;
+ const inc=S.shares.filter(r=>r.to_user===uid).sort((a,b)=>rank(a)-rank(b)),out=S.shares.filter(r=>r.from_user===uid);
+ m.innerHTML=`<div class="pg"><h1>공유</h1>
+ <div class="sech"><h2>받은 곡</h2></div>${inc.length?inc.map(r=>shareRow(r,'in')).join(''):emptyHTML('받은 공유가 없어요.')}
+ <div class="sec"><div class="sech"><h2>보낸 곡</h2></div>${out.length?out.map(r=>shareRow(r,'out')).join(''):emptyHTML('곡의 ⋯ 메뉴에서 다른 계정에 공유할 수 있어요.')}</div></div>`};
 async function deleteSong(id){
  const s=song(id);if(!s)return;
  if(!await confirmBox(`'${s.title}'을(를) 삭제할까요? 클라우드의 파일도 함께 삭제됩니다.`,'삭제',true))return;
@@ -1462,9 +1603,14 @@ const A={
   try{const blob=await fetchYTSquare(id);targets.forEach(i=>setTargetArt('item:'+i.id,blob,id));toast(`${targets.length}개 항목에 적용했어요`,'ok')}catch(e){toast(e.message,'err')}finally{t.disabled=false}},
  async saveuname(){const v=$('#uname').value.trim();if(!v)return;try{S.profile=await dbq(sb.from('profiles').upsert({id:S.user.id,username:v}).select().single());toast('저장했어요','ok')}catch(e){fail(e,'저장 실패')}},
  async changepw(){const v=$('#newpw').value;if(v.length<6)return toast('비밀번호는 6자 이상이어야 해요','err');const {error}=await sb.auth.updateUser({password:v});if(error)toast(authMsg(error),'err');else{$('#newpw').value='';toast('비밀번호를 변경했어요','ok')}},
+ async dlall(){const ids=S.lists.lib||[];if(!ids.length)return;if(!await confirmBox(`${ids.length}곡을 내려받을까요? 브라우저가 여러 파일 다운로드 허용 여부를 물을 수 있어요.`,'다운로드'))return;
+  let n=0;for(const id of ids){const s=song(id);if(s&&await downloadSong(s,true))n++;await sleep(800)}toast(`${n}곡 다운로드를 시작했어요`,'ok')},
+ shaccept(t){const r=S.shares.find(x=>x.id===t.dataset.id);if(r)acceptShare(r,t)},
+ async shdecline(t){t.disabled=true;try{await dbq(sb.rpc('respond_song_share',{p_id:t.dataset.id,p_accept:false}));await loadShares();softRender()}catch(e){t.disabled=false;shareFail(e,'거절 실패')}},
+ async shrm(t){try{await dbq(sb.from('song_shares').delete().eq('id',t.dataset.id));S.shares=S.shares.filter(x=>x.id!==t.dataset.id);updateBadge();softRender()}catch(e){shareFail(e,'삭제 실패')}},
  backup,restore(){$('#restorePick').click()},
  async install(){if(S.installEvt){S.installEvt.prompt();await S.installEvt.userChoice;S.installEvt=null;render()}},
- async logout(){if(!await confirmBox('로그아웃할까요?','로그아웃'))return;flushHist();saveLast();stopPlayback(true);S.loaded=false;S.profile=null;S.user=null;await sb.auth.signOut();S.songs=[];S.byId=new Map();S.favs=new Set();S.playlists=[];S.pls=[];S.history=[];S.up=[];location.hash='';authMode='login';showAuth('login')}
+ async logout(){if(!await confirmBox('로그아웃할까요?','로그아웃'))return;flushHist();saveLast();stopPlayback(true);S.loaded=false;S.profile=null;S.user=null;await sb.auth.signOut({scope:"local"});S.songs=[];S.shares=[];S.sharesLoaded=false;S.byId=new Map();S.favs=new Set();S.playlists=[];S.pls=[];S.history=[];S.up=[];location.hash='';authMode='login';showAuth('login')}
 };
 document.addEventListener('click',e=>{
  const g=e.target.closest('[data-go]');
@@ -1485,67 +1631,6 @@ document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&['+','-','=',
 /* 가로 스크롤 위치 고정 */
 const fix=()=>{if(window.scrollX)window.scrollTo(0,window.scrollY);const m=document.getElementById('main');if(m&&m.scrollLeft)m.scrollLeft=0};
 window.addEventListener('scroll',fix,{passive:true});document.addEventListener('scroll',e=>{if(e.target&&e.target.id==='main')fix()},true);
-})();
-</script>
-<script>
-/* 부드러운 탄성: 손가락 드래그 / 빠른 플링 / 휠·트랙패드 모두 가장자리에서 부드럽게 제한 */
-(function(){
- const SEL='#main,.modal,#qp .ql',MAXD=130;
- const rub=d=>Math.sign(d)*(1-1/(Math.abs(d)*.5/MAXD+1))*MAXD;
- const noScroll=t=>t.scrollHeight<=t.clientHeight+1;
- const atTop=t=>t.scrollTop<=0, atBot=t=>t.scrollTop+t.clientHeight>=t.scrollHeight-1;
- const back=t=>{t.style.transition='transform .55s cubic-bezier(.2,.8,.2,1)';t.style.transform=''};
- let el=null,lastY=0,anchor=0,mode=0,touching=false;
- document.addEventListener('touchstart',e=>{
-  touching=true;
-  const t=e.target.closest(SEL);if(!t||e.touches.length!==1||e.target.closest('input,textarea,select,.rg')){el=null;return}
-  if(t._b){t._b.cancel();t._b=null}
-  el=t;lastY=e.touches[0].clientY;mode=0;t.style.transition='none'},{passive:true});
- document.addEventListener('touchmove',e=>{
-  if(!el||e.touches.length!==1)return;
-  const y=e.touches[0].clientY,step=y-lastY;lastY=y;
-  if(!mode){
-   if(step>0&&(noScroll(el)||atTop(el))){mode=1;anchor=y-step}
-   else if(step<0&&(noScroll(el)||atBot(el))){mode=-1;anchor=y-step}
-   else return}
-  const d=y-anchor;
-  if((mode>0&&d<=0)||(mode<0&&d>=0)){el.style.transform='';mode=0;return}
-  el.style.transition='none';el.style.transform='translateY('+rub(d)+'px)';
-  if(e.cancelable)e.preventDefault()},{passive:false});
- const end=()=>{touching=false;if(el&&el.style.transform)back(el);el=null;mode=0};
- document.addEventListener('touchend',end,{passive:true});document.addEventListener('touchcancel',end,{passive:true});
- /* 세게 튕겨 올린 스크롤이 끝에 닿으면 속도만큼 살짝 밀렸다가 돌아옴 */
- const track=new WeakMap();
- function bounce(t,dir,amp){
-  if(t._b)t._b.cancel();
-  const a=dir*amp;
-  t._b=t.animate([{transform:'translateY(0)',easing:'cubic-bezier(.2,.7,.3,1)'},{transform:'translateY('+a+'px)',offset:.3,easing:'cubic-bezier(.25,.8,.3,1)'},{transform:'translateY(0)'}],{duration:650});
-  t._b.onfinish=t._b.oncancel=()=>{t._b=null}}
- document.addEventListener('scroll',e=>{
-  const t=e.target;if(!(t instanceof Element)||!t.matches(SEL))return;
-  const now=performance.now(),st=t.scrollTop,s=track.get(t)||{st,t:now,v:0,pv:0};
-  const dt=now-s.t;
-  if(dt>0&&dt<200){s.pv=s.v;s.v=s.v*.3+((st-s.st)/dt)*.7}else{s.v=0;s.pv=0}
-  const max=t.scrollHeight-t.clientHeight;
-  const hitTop=st<=0&&s.st>0, hitBot=st>=max-1&&s.st<max-1;
-  if(!touching&&(hitTop||hitBot)){const v=Math.max(Math.abs(s.v),Math.abs(s.pv));if(v>.9)bounce(t,hitTop?1:-1,Math.min(48,v*14))}
-  s.st=st;s.t=now;track.set(t,s)},true);
- /* 마우스 휠 / 트랙패드 */
- let wAcc=0,wEl=null,wTimer=0;
- const release=t=>{wAcc=0;back(t)};
- document.addEventListener('wheel',e=>{
-  if(e.ctrlKey)return;
-  const t=e.target.closest&&e.target.closest(SEL);if(!t)return;
-  const dy=e.deltaY,up=dy<0,max=t.scrollHeight-t.clientHeight;
-  const edge=max<=1||(up&&t.scrollTop<=0)||(!up&&t.scrollTop>=max-1);
-  if(!edge){if(wAcc&&wEl)release(wEl);return}
-  if(t._b){t._b.cancel();t._b=null}
-  if(wEl!==t){wAcc=0;wEl=t}
-  const add=Math.max(-40,Math.min(40,-dy*.35));
-  if(wAcc*add<0)wAcc=0;
-  wAcc=Math.max(-MAXD*3,Math.min(MAXD*3,wAcc+add));
-  t.style.transition='none';t.style.transform='translateY('+rub(wAcc)+'px)';
-  clearTimeout(wTimer);wTimer=setTimeout(()=>release(t),90)},{passive:true});
 })();
 </script>
 <script>
